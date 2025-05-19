@@ -378,14 +378,17 @@ public class ProducerController {
                 bodyJsonOut = parsedTemplates.toString();
                 log.info("Parsed template: " + bodyJsonOut);
             } else {
-                bodyJsonOut = bodyJson.toString();
+                bodyJsonOut = StringEscapeUtils.escapeJson(bodyJson.toString());
             }
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
             HttpEntity<String> entity = new HttpEntity<>(bodyJsonOut, headers);
-            String generateUrl = generateURLTemplate.getUrl() + "&failIfMultipleFound=" + failIfMultipleFound
-                    + "&failIfNoneFound=" + failIfNoneFound + "&lookupInExternalERs=" + lookupInExternalERs
-                    + "&lookupLimit=" + lookupLimit + "&okToLeaveOutInvalidOptionalFields=" + okToLeaveOutInvalidOptionalFields;
+            String generateUrl = generateURLTemplate.getUrl() 
+                    + "&failIfMultipleFound=" + StringEscapeUtils.escapeHtml4(String.valueOf(failIfMultipleFound))
+                    + "&failIfNoneFound=" + StringEscapeUtils.escapeHtml4(String.valueOf(failIfNoneFound))
+                    + "&lookupInExternalERs=" + StringEscapeUtils.escapeHtml4(String.valueOf(lookupInExternalERs))
+                    + "&lookupLimit=" + StringEscapeUtils.escapeHtml4(String.valueOf(lookupLimit))
+                    + "&okToLeaveOutInvalidOptionalFields=" + StringEscapeUtils.escapeHtml4(String.valueOf(okToLeaveOutInvalidOptionalFields));
 
             ResponseEntity<String> response = restTemplate.postForEntity(generateUrl,
                     entity, String.class, generateURLTemplate.getMap(msgProtocol, msgType));
@@ -419,9 +422,9 @@ public class ProducerController {
             String responseBody = null;
             String responseMessage = e.getResponseBodyAsString();
             if (bodyJson.isJsonObject()) {
-                responseBody = "[" + responseMessage + "]";
+                responseBody = "[" + StringEscapeUtils.escapeHtml4(responseMessage) + "]";
             } else if (bodyJson.isJsonArray()) {
-                responseBody = responseMessage;
+                responseBody = StringEscapeUtils.escapeHtml4(responseMessage);
             }
             responseEvents = processingValidEvent(responseBody, msgProtocol, userDomain, tag, routingKey);
             return new ResponseEntity<>(responseEvents, HttpStatus.BAD_REQUEST);

@@ -459,6 +459,11 @@ public class ProducerController {
 //                    entity, String.class, generateURLTemplate.getMap(mp, mt));
             ResponseEntity<String> response = restTemplate.postForEntity("https://a.b.com/hohoho",
                     entity, String.class, generateURLTemplate.getMap(mp, mt));
+            headers = response.getHeaders();
+            List<String> contentType = headers.get(HttpHeaders.CONTENT_TYPE);
+            if (contentType == null || contentType.isEmpty()) {
+                headers.setContentType(MediaType.APPLICATION_JSON);
+            }
 
             responseStatus = response.getStatusCode();
             String responseBody = null;

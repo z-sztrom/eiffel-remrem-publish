@@ -457,7 +457,7 @@ public class ProducerController {
 
 //            ResponseEntity<String> response = restTemplate.postForEntity(generateUrl,
 //                    entity, String.class, generateURLTemplate.getMap(mp, mt));
-            ResponseEntity<String> response = restTemplate.postForEntity("https://a.b.c/",
+            ResponseEntity<String> response = restTemplate.postForEntity("https://a.b.com/hohoho",
                     entity, String.class, generateURLTemplate.getMap(mp, mt));
 
             responseStatus = response.getStatusCode();

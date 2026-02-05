@@ -14,9 +14,11 @@
 */
 package com.ericsson.eiffel.remrem.publish.controller;
 
+import java.nio.file.Path;
 import java.util.*;
 
 import com.ericsson.eiffel.remrem.protocol.ValidationResult;
+import com.ericsson.eiffel.remrem.publish.helper.SSLContextReloader;
 import com.ericsson.eiffel.remrem.publish.service.*;
 import com.google.gson.*;
 import org.slf4j.LoggerFactory;
@@ -54,6 +56,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+
+import javax.annotation.PostConstruct;
 
 @ComponentScan("com.ericsson.eiffel.remrem")
 @RestController
@@ -115,9 +119,20 @@ public class ProducerController {
         // Check if the user is authenticated
         if (authentication != null && authentication.isAuthenticated()) {
             // Get the UserDetails object, which contains user information
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            Object principal = authentication.getPrincipal();
+            String username = "";
+            if (principal == null) {
+                username = "null";
+            }
+            else if (principal instanceof UserDetails) {
+                UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+                username = userDetails.getUsername();
+            }
+            else {
+                username = principal.toString();
+            }
+
             // Get the username of the authenticated user
-            String username = userDetails.getUsername();
             log.info("User name: {} ", username);
         }
     }
